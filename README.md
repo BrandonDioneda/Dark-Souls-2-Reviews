@@ -1,2 +1,2 @@
 # Dark-Souls-2-Reviews
-As a devoted fan, I've seen why Dark Souls 2 stands as the black sheep. Segmented level design, Drangleic's narrative departure, and gameplay tweaks spark debates. Many of these debates in the past were pretty negative on the game, though recently people ar egiving the game a 2nd chance. I wanted to analyze Steam reviews to look more into this phenomenon.
+As a dedicated fan, I've witnessed why Dark Souls 2 earned its "black sheep" status. Debates over its segmented level design, Drangleic's narrative shift, and gameplay tweaks were initially negative. However, a recent resurgence in interest has prompted a second look. I'm diving into Steam reviews to unravel this evolving phenomenon.
