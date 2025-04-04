@@ -3,6 +3,7 @@ import numpy as np
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
+from top2vec import Top2Vec
 
 def remove_stopwords(text):
     stop_words = set(stopwords.words('english'))
@@ -35,3 +36,12 @@ def get_data():
     reviews['review'] = reviews.review.apply(remove_stopwords)
 
     return reviews
+
+def topics(documents):
+    mdl = Top2Vec(
+        documents=documents,
+        # contextual_top2vec=True,
+        speed="learn",
+        workers=8,
+    )
+    return mdl
