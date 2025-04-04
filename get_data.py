@@ -27,6 +27,7 @@ def get_data():
         .str.lower()
         .str.replace(r'http\S+', '', regex=True)  # Remove URLs
         .str.replace(r'[^a-z]', ' ', regex=True)  # Keep only letters
+        .str.replace(r'\b([a-z])\b', ' ', regex=True)  # Remove single letters
         .str.replace(r'\s+', ' ', regex=True)     # Replace multiple spaces with single space
         .str.strip()
     )
