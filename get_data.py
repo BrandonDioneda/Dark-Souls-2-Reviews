@@ -4,6 +4,8 @@ from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from top2vec import Top2Vec
+import matplotlib.pyplot as plt
+from wordcloud import WordCloud
 
 def remove_stopwords(text):
     stop_words = set(stopwords.words('english'))
@@ -45,3 +47,19 @@ def topics(documents):
         workers=8,
     )
     return mdl
+
+def topic_clouds(topic_words, word_scores, topic_nums):
+    for i in range(len(topic_words)):
+        words = topic_words[i]
+        scores = word_scores[i]
+        word_freq = {w: s for w, s in zip(words, scores)}
+        
+        wc = WordCloud(width=800, height=400, background_color='black')
+        wc.generate_from_frequencies(word_freq)
+
+        plt.figure(figsize=(10, 5))
+        plt.imshow(wc, interpolation='bilinear')
+        plt.axis("off")
+        plt.title(f"Topic {topic_nums[i]}")
+        plt.show()
+
