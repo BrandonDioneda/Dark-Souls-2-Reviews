@@ -6,12 +6,37 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from top2vec import Top2Vec
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud
+from nltk.stem import WordNetLemmatizer
+from nltk import pos_tag
+from nltk.corpus import wordnet
 
-def remove_stopwords(text):
+def get_wordnet_pos(treebank_tag):
+    if treebank_tag.startswith('J'):
+        return wordnet.ADJ
+    elif treebank_tag.startswith('V'):
+        return wordnet.VERB
+    elif treebank_tag.startswith('N'):
+        return wordnet.NOUN
+    elif treebank_tag.startswith('R'):
+        return wordnet.ADV
+    else:
+        return wordnet.NOUN  # default to noun
+
+def remove_stopwords_and_lemmatize(text):
     stop_words = set(stopwords.words('english'))
     stop_words.update(['dark', 'souls', 'soul', 'ds', 'scholar', 'first', 'sin', 'edition', 'game'])
+
+    lemmatizer = WordNetLemmatizer()
     words = word_tokenize(text)
-    return ' '.join([word for word in words if word not in stop_words])
+    pos_tags = pos_tag(words)
+
+    lemmatized_words = [
+        lemmatizer.lemmatize(word, get_wordnet_pos(pos))
+        for word, pos in pos_tags
+        if word not in stop_words
+    ]
+
+    return ' '.join(lemmatized_words)
 
 def get_data():
     df = pd.read_csv('reviews.csv')
@@ -35,7 +60,7 @@ def get_data():
         .str.strip()
     )
 
-    reviews['review'] = reviews.review.apply(remove_stopwords)
+    reviews['review'] = reviews.review.apply(remove_stopwords_and_lemmatize)
 
     return reviews
 
