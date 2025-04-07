@@ -40,7 +40,8 @@ def remove_stopwords_and_lemmatize(text):
 
 def get_data():
     df = pd.read_csv('reviews.csv')
-    reviews = df.copy()
+    ds2_df = pd.read_csv('ds2-reviews.csv')
+    reviews = pd.concat([df, ds2_df], ignore_index=True)
     reviews = reviews[reviews.language == 'english'].dropna(subset=['review'])
     reviews = reviews.set_index('recommendationid')
     reviews.drop(columns={'Unnamed: 0'}, inplace=True)
