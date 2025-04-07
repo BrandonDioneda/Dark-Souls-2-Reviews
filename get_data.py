@@ -41,15 +41,13 @@ def remove_stopwords_and_lemmatize(text):
 def get_data():
     df = pd.read_csv('reviews.csv')
     ds2_df = pd.read_csv('ds2-reviews.csv')
-    reviews = pd.concat([df, ds2_df], ignore_index=True)
-    reviews = reviews[reviews.language == 'english'].dropna(subset=['review'])
-    reviews = reviews.set_index('recommendationid')
-    reviews.drop(columns={'Unnamed: 0'}, inplace=True)
+    reviews = pd.concat([ds2_df, df], ignore_index=True)
 
-    reviews['month_name'] = pd.to_datetime(reviews.update_date, unit='s').dt.month_name()
-    reviews['month']      = pd.to_datetime(reviews.update_date, unit='s').dt.month
-    reviews['year']       = pd.to_datetime(reviews.update_date, unit='s').dt.year
-    reviews['day']        = pd.to_datetime(reviews.update_date, unit='s').dt.day
+    reviews = reviews[reviews.language == 'english'].dropna(subset=['review'])
+    reviews.drop(columns={'Unnamed: 0'}, inplace=True)
+    reviews = reviews.set_index('recommendationid')
+    reviews.update_date   = pd.to_datetime(reviews["update_date"], unit='s')
+    reviews.init_date     = pd.to_datetime(reviews["init_date"], unit='s')
 
     reviews['review'] = (
         reviews['review']
@@ -88,4 +86,3 @@ def topic_clouds(topic_words, word_scores, topic_nums):
         plt.axis("off")
         plt.title(f"Topic {topic_nums[i]}")
         plt.show()
-
