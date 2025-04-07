@@ -2,4 +2,3 @@ examples/
 figures/
 __pycache__/
 models/
-models/top2vec_model
