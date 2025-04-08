@@ -9,6 +9,8 @@ from wordcloud import WordCloud
 from nltk.stem import WordNetLemmatizer
 from nltk import pos_tag
 from nltk.corpus import wordnet
+from gensim.corpora import Dictionary
+from gensim.models import CoherenceModel
 
 def get_wordnet_pos(treebank_tag):
     if treebank_tag.startswith('J'):
@@ -86,3 +88,29 @@ def topic_clouds(topic_words, word_scores, topic_nums):
         plt.axis("off")
         plt.title(f"Topic {topic_nums[i]}")
         plt.show()
+
+def extra_content_release(date):
+    ds2_start = pd.Timestamp("2014-03-11")
+    dlc1_start = pd.Timestamp("2014-07-22")
+    dlc2_start = pd.Timestamp("2014-08-26")
+    dlc3_start = pd.Timestamp("2014-09-30")
+    sotfs_start = pd.Timestamp("2015-04-01")
+
+    if date < ds2_start:
+        return date
+
+    if (date >= ds2_start) and (date < dlc1_start):
+        return ds2_start
+    elif date < dlc2_start:
+        return dlc1_start
+    elif date < dlc3_start:
+        return dlc2_start
+    elif date < sotfs_start:
+        return dlc3_start
+    else:
+        return sotfs_start
+    
+def metrics(model, text, topics, dictionary):
+    coherence_model = CoherenceModel(model=model, texts=text, topics=topics, dictionary=dictionary, coherence='c_v')
+    coherence_score = coherence_model.get_coherence()
+    return "Coherence Score:", coherence_score
