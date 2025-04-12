@@ -12,6 +12,12 @@ from nltk.corpus import wordnet
 from gensim.corpora import Dictionary
 from gensim.models import CoherenceModel
 
+ds2_start = pd.Timestamp("2014-03-11")
+dlc1_start = pd.Timestamp("2014-07-22")
+dlc2_start = pd.Timestamp("2014-08-26")
+dlc3_start = pd.Timestamp("2014-09-30")
+sotfs_start = pd.Timestamp("2015-04-01")
+
 def get_wordnet_pos(treebank_tag):
     if treebank_tag.startswith('J'):
         return wordnet.ADJ
@@ -41,16 +47,15 @@ def remove_stopwords_and_lemmatize(text):
     return ' '.join(lemmatized_words)
 
 def get_data():
-    df = pd.read_csv('reviews.csv')
-    ds2_df = pd.read_csv('ds2-reviews.csv')
-    reviews = pd.concat([ds2_df, df], ignore_index=True)
+    vanilla = pd.read_csv('reviews.csv')
+    scholar = pd.read_csv('ds2-reviews.csv')
+    reviews = pd.concat([scholar, vanilla], ignore_index=True)
 
     reviews = reviews[reviews.language == 'english'].dropna(subset=['review'])
     reviews.drop(columns={'Unnamed: 0'}, inplace=True)
     reviews = reviews.set_index('recommendationid')
     reviews.update_date   = pd.to_datetime(reviews["update_date"], unit='s')
     reviews.init_date     = pd.to_datetime(reviews["init_date"], unit='s')
-
     reviews['review'] = (
         reviews['review']
         .str.lower()
@@ -60,10 +65,12 @@ def get_data():
         .str.replace(r'\s+', ' ', regex=True)     # Replace multiple spaces with single space
         .str.strip()
     )
-
     reviews['review'] = reviews.review.apply(remove_stopwords_and_lemmatize)
 
-    return reviews
+    scholar = reviews[reviews.update_date() >= pd.Timestamp("2015-04-01")] 
+    vanilla = reviews[reviews.update_date() < pd.Timestamp("2015-04-01")] 
+
+    return reviews, vanilla, scholar
 
 def topics(documents):
     mdl = Top2Vec(
@@ -90,12 +97,6 @@ def topic_clouds(topic_words, word_scores, topic_nums):
         plt.show()
 
 def extra_content_release(date):
-    ds2_start = pd.Timestamp("2014-03-11")
-    dlc1_start = pd.Timestamp("2014-07-22")
-    dlc2_start = pd.Timestamp("2014-08-26")
-    dlc3_start = pd.Timestamp("2014-09-30")
-    sotfs_start = pd.Timestamp("2015-04-01")
-
     if date < ds2_start:
         return date
 
